@@ -1,0 +1,45 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
+
+const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
+
+const useGif = (tag) => {
+
+  const [gif, setGif] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function fetchData(customTag) {
+
+    try {
+
+      setLoading(true);
+
+      const response = await axios.get(
+        customTag
+          ? `${url}&tag=${customTag}`
+          : url
+      );
+
+      const imageSource =
+        response.data.data.images.downsized_large.url;
+
+      setGif(imageSource);
+
+    }
+    catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData(tag);
+  }, []);
+
+  return { gif, loading, fetchData };
+};
+
+export default useGif;
